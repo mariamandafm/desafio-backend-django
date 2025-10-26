@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class AutoPart(models.Model):
     """Model representing an automobile part."""
     name = models.CharField(max_length=255)
