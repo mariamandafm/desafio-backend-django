@@ -74,6 +74,29 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+  celery_beat:
+    build:
+      context: . 
+      args: 
+        - DEV=true
+    volumes: 
+      - ./app:/app
+    command: >
+      sh -c "python manage.py wait_for_db &&
+             celery -A app beat -l info"
+    environment:
+      - DB_HOST=${DB_HOST}
+      - DB_NAME=${POSTGRES_DB}
+      - DB_USER=${POSTGRES_USER}
+      - DB_PASS=${POSTGRES_PASSWORD}
+      - DEBUG=1
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
 
 volumes:
   dev-db-data: 
